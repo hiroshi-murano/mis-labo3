@@ -1,35 +1,82 @@
 <!DOCTYPE html>
 <html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>vercelでflaskを動かすテンプレート</title>
-    <link rel="icon" href="static/images/favicon.ico" />
-    <link rel="stylesheet" href="static/css/bootstrap.min.css" />
-  </head>
-  <body>
-    <nav class="navbar navbar-dark bg-primary">
-      <a class="navbar-brand" href="#">vercelでflaskを動かすテンプレート</a>
-    </nav>
 
-    <div class="container">
-      <br />
-      <input type="text" id="text1" class="form-control" />
-      <button id="btnGet" type="button" class="btn btn-primary">
-        GETテスト
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>付箋管理</title>
+  <link rel="icon" href="static/images/favicon.ico" />
+  <link rel="stylesheet" href="static/css/bootstrap.min.css" />
+
+  <style>
+    .note {
+      background-color: pink;
+      padding: 15px;
+      cursor: pointer;
+      width: 300px;
+    }
+
+    .box {
+      margin: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar navbar-dark bg-primary">
+    <a class="navbar-brand" href="/">付箋管理</a>
+  </nav>
+
+  <div class="container">
+    <div class="box">
+      <button type="button" id="btnDL" class="btn btn-primary">
+        load
       </button>
-      <p id="msg1"></p>
-      <hr />
-      <button id="btnPost" type="button" class="btn btn-primary">
-        POSTテスト
-      </button>
+    </div>
+    <div id="sticky-note-container" style="margin-left: 0px;">
     </div>
 
     <script src="static/js/jquery-3.6.0.min.js"></script>
-
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+      integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
     <script>
-      $(function () {});
+      $(function () { });
+
+
+
+      $("#btnDL").on("click", function () {
+
+        console.log('DL');
+
+        $.getJSON(
+          "/api/kintone_dl", // リクエストURL
+          {
+          },
+          function (data, status) {
+
+            console.log(data);
+
+            for (const element of data) {
+              console.log(element.id);
+              AddNote(element.id, element.回答内容);
+            }
+          }
+        );
+
+      });
+
+
+      function AddNote(id, answer) {
+
+        const note = `<div class="note"><img src="/static/images/${id}.png" width="100%"><br><br><textarea rows="5" style="width:100%;">${answer}</textarea></div>`;
+        var $note = $(note);
+        $note.draggable();
+        $('#sticky-note-container').append($note);
+
+      }
+
+
 
       $("#btnGet").on("click", function () {
         let txt = $("#text1").val();
@@ -117,5 +164,6 @@
           });
       });
     </script>
-  </body>
+</body>
+
 </html>

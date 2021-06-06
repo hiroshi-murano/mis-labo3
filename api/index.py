@@ -2,6 +2,7 @@ from flask import Flask, render_template, jsonify, request
 from pprint import PrettyPrinter, pprint
 import json
 import requests
+from  kintone_dl import data_select,data_download
 
 
 # app = Flask(__name__)
@@ -12,6 +13,20 @@ app.config['JSON_AS_ASCII'] = False  # jsonを文字化けせずに返すため
 @app.route('/')
 def index():
     return render_template('index.html')
+
+
+@app.route('/api/kintone_dl', methods=['GET'])
+def kintone_dl():
+    """
+    kintoneからイメージのダウンロード
+    """
+
+    listData=data_select()
+    data_download(listData)
+
+    return jsonify(listData), 200
+
+
 
 
 @app.route('/api_01')
